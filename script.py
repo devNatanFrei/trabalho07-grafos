@@ -21,12 +21,10 @@ class Grafo:
         self.grafo[a][b] = peso
 
     def bellman_ford(self, start_vertex):
-    
         distances = {v: float('inf') for v in self.grafo}
         predecessors = {v: None for v in self.grafo}
         distances[start_vertex] = 0
 
-      
         for _ in range(len(self.grafo) - 1):
             for u in self.grafo:
                 for v in self.grafo[u]:
@@ -35,18 +33,28 @@ class Grafo:
                         predecessors[v] = u
                         print(f"Relaxando aresta {u}->{v}, nova distância para {v}: {distances[v]}")
 
-    
         for u in self.grafo:
             for v in self.grafo[u]:
                 if distances[u] + self.grafo[u][v] < distances[v]:
+                    print("Ciclo negativo detectado!")
                     return (True, None, None)
 
         return (False, distances, predecessors)
 
-    def get_path(self, predecessors, start_vertex, end_vertex):
-        path = []
-        current = end_vertex
-        while current is not None:
-            path.insert(0, current)
-            current = predecessors[current]
-        return '->'.join(path) if path[0] == start_vertex else None
+ 
+
+
+
+grafh = Grafo('grafo01.txt')
+
+initial_vertex = input('Digite o vértice inicial: ').strip()
+if initial_vertex not in grafh.grafo:
+    print("Vértice inicial não encontrado no grafo.")
+else:
+    has_negative_cycle, distances, predecessors = grafh.bellman_ford(initial_vertex)
+    if has_negative_cycle:
+        print("O grafo contém ciclos negativos. Não é possível calcular distâncias confiáveis.")
+    else:
+        print(f"Distâncias a partir do vértice {initial_vertex}:")
+        for vertex, distance in distances.items():
+            print(f"{initial_vertex} -> {vertex}: {distance}")
