@@ -54,7 +54,7 @@ class Grafo:
 
 
 g = Grafo('grafo02.txt')
-initial_vertex = input('Digite o vértice inicial: ').strip()
+initial_vertex = input('Digite o vértice inicial: ')
 negative_cycle, distances, predecessors = g.bellman_ford(initial_vertex)
 
 if not negative_cycle:
