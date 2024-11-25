@@ -41,21 +41,32 @@ class Grafo:
 
         return (False, distances, predecessors)
 
- 
+    def get_path(self, predecessors, start_vertex, end_vertex):
+        path = []
+        current = end_vertex
+        while current is not None:
+            path.insert(0, current)
+            current = predecessors[current]
+        if path[0] != start_vertex:  
+            return None
+        return ' -> '.join(path)
 
 
 
-grafh = Grafo('grafo02.txt')
-
+g = Grafo('grafo02.txt')
 initial_vertex = input('Digite o vértice inicial: ').strip()
-if initial_vertex not in grafh.grafo:
-    print("Vértice inicial não encontrado no grafo.")
+negative_cycle, distances, predecessors = g.bellman_ford(initial_vertex)
+
+if not negative_cycle:
+    print("\nResultados:")
+    for vertex in g.grafo:
+        if distances[vertex] != float('inf'):
+            path = g.get_path(predecessors, initial_vertex, vertex)
+            if initial_vertex != vertex:    
+                print(f"Caminho de {initial_vertex} para {vertex}: {path}, Distância: {distances[vertex]}")
+        else:
+            print(f"Não há caminho de {initial_vertex} para {vertex}, Distância: Infinita")
 else:
-    has_negative_cycle, distances, predecessors = grafh.bellman_ford(initial_vertex)
-    if has_negative_cycle:
-        print("O grafo contém ciclos negativos. Não é possível calcular distâncias confiáveis.")
-    else:
-        print(f"Distâncias a partir do vértice {initial_vertex}:")
-        for vertex, distance in distances.items():
-            if  initial_vertex != vertex:
-                print(f"{initial_vertex} -> {vertex}: {distance}")
+    print("Ciclo de peso negativo detectado! Não é possível calcular os caminhos mais curtos.")
+
+    
