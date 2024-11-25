@@ -45,7 +45,7 @@ class Grafo:
 
 
 
-grafh = Grafo('grafo01.txt')
+grafh = Grafo('grafo02.txt')
 
 initial_vertex = input('Digite o vértice inicial: ').strip()
 if initial_vertex not in grafh.grafo:
@@ -57,4 +57,5 @@ else:
     else:
         print(f"Distâncias a partir do vértice {initial_vertex}:")
         for vertex, distance in distances.items():
-            print(f"{initial_vertex} -> {vertex}: {distance}")
+            if  initial_vertex != vertex:
+                print(f"{initial_vertex} -> {vertex}: {distance}")
