@@ -25,48 +25,85 @@ class Grafo:
         predecessors = {v: None for v in self.grafo}
         distances[start_vertex] = 0
 
+        
         for _ in range(len(self.grafo) - 1):
             for u in self.grafo:
                 for v in self.grafo[u]:
-                    if distances[u] + self.grafo[u][v] < distances[v]:
+                    if distances[u] != float('inf') and distances[u] + self.grafo[u][v] < distances[v]:
                         distances[v] = distances[u] + self.grafo[u][v]
                         predecessors[v] = u
-                        print(f"Relaxando aresta {u}->{v}, nova distância para {v}: {distances[v]}")
 
+        
+        negative_edges = set()
         for u in self.grafo:
             for v in self.grafo[u]:
-                if distances[u] + self.grafo[u][v] < distances[v]:
-                    print("Ciclo negativo detectado!")
-                    return (True, None, None)
+                if distances[u] != float('inf') and distances[u] + self.grafo[u][v] < distances[v]:
+                    negative_edges.add((u, v))
 
-        return (False, distances, predecessors)
+        return distances, predecessors, negative_edges
 
-    def get_path(self, predecessors, start_vertex, end_vertex):
+    def remove_vertices(self, vertices_to_remove):
+        for v in vertices_to_remove:
+            if v in self.grafo:
+                del self.grafo[v]
+            for u in self.grafo:
+                if v in self.grafo[u]:
+                    del self.grafo[u][v]
+
+    def reconstruct_path(self, start_vertex, end_vertex, predecessors):
         path = []
         current = end_vertex
-        while current is not None:
-            path.insert(0, current)
+        while current is not None and current != start_vertex:
+            path.append(current)
             current = predecessors[current]
-        if path[0] != start_vertex:  
-            return None
-        return ' -> '.join(path)
+        if current == start_vertex:
+            path.append(start_vertex)
+        return path[::-1]
+
+    def print_results(self, start_vertex, distances, predecessors, negative_edges):
+        for end_vertex in self.grafo:
+            if end_vertex == start_vertex:
+                continue
+            elif distances[end_vertex] == float('inf') or (end_vertex in negative_edges):
+        
+                if (start_vertex, end_vertex) in negative_edges or (end_vertex, start_vertex) in negative_edges:
+                    print(f"Distância de {start_vertex} para {end_vertex} é: Infinita")
+                else:
+                    print(f"Distância de {start_vertex} para {end_vertex} é: Infinita")
+            else:
+                path = self.reconstruct_path(start_vertex, end_vertex, predecessors)
+                print(f"Distância de {start_vertex} para {end_vertex} é: {distances[end_vertex]}")
+                print(f"Caminho: {' -> '.join(path)}")
+
+    def bellman_ford_ignore_cycles(self, start_vertex, negative_edges):
+        distances = {v: float('inf') for v in self.grafo}
+        predecessors = {v: None for v in self.grafo}
+        distances[start_vertex] = 0
+
+
+        for _ in range(len(self.grafo) - 1):
+            for u in self.grafo:
+                for v in self.grafo[u]:
+                    if (u, v) in negative_edges or (v, u) in negative_edges:
+                        continue  
+                    if distances[u] != float('inf') and distances[u] + self.grafo[u][v] < distances[v]:
+                        distances[v] = distances[u] + self.grafo[u][v]
+                        predecessors[v] = u
+
+        return distances, predecessors
 
 
 
-g = Grafo('grafo02.txt')
+g = Grafo('grafo01.txt')
+
+
 initial_vertex = input('Digite o vértice inicial: ')
-negative_cycle, distances, predecessors = g.bellman_ford(initial_vertex)
 
-if not negative_cycle:
-    print("\nResultados:")
-    for vertex in g.grafo:
-        if distances[vertex] != float('inf'):
-            path = g.get_path(predecessors, initial_vertex, vertex)
-            if initial_vertex != vertex:    
-                print(f"Caminho de {initial_vertex} para {vertex}: {path}, Distância: {distances[vertex]}")
-        else:
-            print(f"Não há caminho de {initial_vertex} para {vertex}, Distância: Infinita")
-else:
-    print("Ciclo de peso negativo detectado! Não é possível calcular os caminhos mais curtos.")
 
-    
+distances, predecessors, negative_edges = g.bellman_ford(initial_vertex)
+
+
+distances, predecessors = g.bellman_ford_ignore_cycles(initial_vertex, negative_edges)
+
+
+g.print_results(initial_vertex, distances, predecessors, negative_edges)
