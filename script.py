@@ -84,7 +84,7 @@ class Grafo:
         for _ in range(len(self.grafo) - 1):
             for u in self.grafo:
                 for v in self.grafo[u]:
-                    if (u, v) in negative_edges or (v, u) in negative_edges:
+                    if (u, v) in negative_edges:
                         continue  
                     if distances[u] != float('inf') and distances[u] + self.grafo[u][v] < distances[v]:
                         distances[v] = distances[u] + self.grafo[u][v]
@@ -94,7 +94,7 @@ class Grafo:
 
 
 
-g = Grafo('grafo01.txt')
+g = Grafo('grafo02.txt')
 
 
 initial_vertex = input('Digite o vértice inicial: ')
