@@ -42,13 +42,7 @@ class Grafo:
 
         return distances, predecessors, negative_edges
 
-    def remove_vertices(self, vertices_to_remove):
-        for v in vertices_to_remove:
-            if v in self.grafo:
-                del self.grafo[v]
-            for u in self.grafo:
-                if v in self.grafo[u]:
-                    del self.grafo[u][v]
+  
 
     def reconstruct_path(self, start_vertex, end_vertex, predecessors):
         path = []
