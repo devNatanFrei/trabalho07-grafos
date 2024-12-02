@@ -96,8 +96,9 @@ initial_vertex = input('Digite o vértice inicial: ')
 
 distances, predecessors, negative_edges = g.bellman_ford(initial_vertex)
 
+if negative_edges:
+    distances, predecessors = g.bellman_ford_ignore_cycles(initial_vertex, negative_edges)
 
-distances, predecessors = g.bellman_ford_ignore_cycles(initial_vertex, negative_edges)
 
 
 g.print_results(initial_vertex, distances, predecessors, negative_edges)
